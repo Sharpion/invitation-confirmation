@@ -55,6 +55,7 @@ router.get('/', function(req, res) {
 router.route('/confirmation')
 
   .get(function(req, res) {
+			console.log('Returning all confirmations...');
 			Confirmation.find(function(err, confirmations) {
           if (err)
               res.send(err);
@@ -66,7 +67,9 @@ router.route('/confirmation')
   router.route('/confirmation/:confirmation_id')
   // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
   .get(function(req, res) {
-			Confirmation.findById(req.params.confirmation_id, function(err, confirmation) {
+			let code = req.params.code;
+			console.log('Returning confirmation from code: ' + code);
+			Confirmation.findById(code, function(err, confirmation) {
             if (err)
                 res.send(err);
             res.json(confirmation);
