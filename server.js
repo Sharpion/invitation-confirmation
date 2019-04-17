@@ -55,21 +55,21 @@ router.get('/', function(req, res) {
 router.route('/confirmation')
 
   .get(function(req, res) {
-      Forecast.find(function(err, forecasts) {
+			Confirmation.find(function(err, confirmations) {
           if (err)
               res.send(err);
           
-          res.json(forecasts);
+          res.json(confirmations);
       }).sort({name: -1})
   });
 
   router.route('/confirmation/:confirmation_id')
-  // get the forecast with that id (accessed at GET http://localhost:8080/api/forecasts/:forecast_id)
+  // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
   .get(function(req, res) {
-      Forecast.findById(req.params.forecast_id, function(err, forecast) {
+			Confirmation.findById(req.params.confirmation_id, function(err, confirmation) {
             if (err)
                 res.send(err);
-            res.json(forecast);
+            res.json(confirmation);
       });
 });
 
