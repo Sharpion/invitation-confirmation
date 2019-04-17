@@ -64,7 +64,7 @@ router.route('/confirmation')
       }).sort({name: -1})
   });
 
-  router.route('/confirmation/:confirmation_id')
+  router.route('/confirmation/:code')
   // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
   .get(function(req, res) {
 			let code = req.params.code;
