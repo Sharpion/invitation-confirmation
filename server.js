@@ -120,8 +120,8 @@ router.route('/confirm/:object')
                     res.send(err);
                     console.log("Error trying to send e-mail");
                 }
-            });
-            res.send(ret);
+                res.send(ret);
+            });            
         });  
     });
 
