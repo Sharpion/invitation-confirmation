@@ -60,22 +60,41 @@ router.route('/confirmation')
 
     .get(function(req, res) {
         Confirmation.find(function(err, confirmations) {
-            if (err)
+            if (err) {
                 res.send(err);
+                console.log("Error trying to find");
+            }
           
             res.json(confirmations);
         }).sort({name: -1})
+    })
+    .get(function(req) {
+        let wedding = req.params.wedding;
+        let transportation = req.params.transportation;
+        Confirmation.where({_id: id}).update({wedding: wedding, transportation: transportation}, function(err, confirmation) {
+            if (err) {
+                res.send(err);
+                console.log("Error trying to update confirmation");
+            }
+
+            console.log(confirmation);
+            return true;
+        });
     });
+
 
     router.route('/confirmation/:code')
     // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
     .get(function(req, res) {
 			let code = req.params.code;
 			Confirmation.find({code: code}, function(err, confirmation) {
-            if (err)
+            if (err) {
                 res.send(err);
+                console.log("Error trying to find by code");
+            }
             res.json(confirmation);
     });
+
 });
 
 
