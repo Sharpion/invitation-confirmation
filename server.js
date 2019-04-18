@@ -15,8 +15,8 @@ let transporter = nodemailer.createTransport({
     port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
-        user: process.env.EMAIL, // generated ethereal user
-        pass: process.env.E_PASS // generated ethereal password
+        user: process.env.EMAIL,
+        pass: process.env.E_PASS
     }
 });
 
@@ -100,7 +100,6 @@ router.route('/confirm/:object')
     .get(function(req, res) {
         let object = JSON.parse(req.params.object);
             Confirmation.findByIdAndUpdate(object.id, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
-            console.log(ret);
 
             if (err) {
                 res.send(err);
@@ -113,6 +112,12 @@ router.route('/confirm/:object')
                 subject: "Confirmação", // Subject line
                 text: "Olá, o convidado " +ret.name+ " acabou de fazer alterações nas suas confirmações! Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + " | Vai de van: " + (ret.transportation? 'SIM' : 'NÃO'), // plain text body
                 html: "Olá<br><br> O convidado <b>"+ret.name+"</b> acabou de fazer alterações nas suas confirmações!<br><br>Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + "<br>Vai de van: " + (ret.transportation? 'SIM' : 'NÃO') // html body
+            }, function (err) {
+                if (err) {
+                    res.send(err);
+                    console.log("Error trying to send e-mail");
+                }
+
             });
             
             res.send(ret);
