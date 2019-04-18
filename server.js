@@ -71,7 +71,7 @@ router.route('/confirmation')
     // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
     .get(function(req, res) {
 			let code = req.params.code;
-			Confirmation.findById(code, function(err, confirmation) {
+			Confirmation.find({code: code}, function(err, confirmation) {
             if (err)
                 res.send(err);
             res.json(confirmation);
