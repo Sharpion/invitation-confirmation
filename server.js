@@ -1,7 +1,9 @@
 // server.js
-// where your node app starts
 
-// init project
+// BASE SETUP
+// =============================================================================
+
+// call the packages we need
 var express     = require('express');        // call express
 var app         = express();                 // define our app using express
 var bodyParser  = require('body-parser');
@@ -22,18 +24,19 @@ mongoose.connect(dbURI); // connect to the database
 // CONNECTION EVENTS
 // When successfully connected
 mongoose.connection.on('connected', function () {  
-    console.log('Mongoose default connection open to ' + dbURI);
+	console.log('Mongoose default connection open to ' + dbURI);
 }); 
 
 // If the connection throws an error
 mongoose.connection.on('error',function (err) {  
-    console.log('Mongoose default connection error: ' + err);
+	console.log('Mongoose default connection error: ' + err);
 }); 
 
 // When the connection is disconnected
 mongoose.connection.on('disconnected', function () {  
-    console.log('Mongoose default connection disconnected'); 
+	console.log('Mongoose default connection disconnected'); 
 });
+
 
 // ROUTES FOR OUR API
 // =============================================================================
@@ -50,31 +53,29 @@ router.get('/', function(req, res) {
     res.json({ message: 'API app is up and running' });   
 });
 
+
 // on routes that end in /confirmation
 // ----------------------------------------------------
 router.route('/confirmation')
 
-  .get(function(req, res) {
-			console.log('Returning all confirmations...');
-			console.log(res);
-			Confirmation.find(function(err, confirmations) {
-          if (err)
-              res.send(err);
+    .get(function(req, res) {
+        Confirmation.find(function(err, confirmations) {
+            if (err)
+                res.send(err);
           
-          res.json(confirmations);
-      }).sort({name: -1})
-  });
+            res.json(confirmations);
+        }).sort({name: -1})
+    });
 
-  router.route('/confirmation/:code')
-  // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
-  .get(function(req, res) {
+    router.route('/confirmation/:code')
+    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
+    .get(function(req, res) {
 			let code = req.params.code;
-			console.log('Returning confirmation from code: ' + code);
 			Confirmation.findById(code, function(err, confirmation) {
             if (err)
                 res.send(err);
             res.json(confirmation);
-      });
+    });
 });
 
 

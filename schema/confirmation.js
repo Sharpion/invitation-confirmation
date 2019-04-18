@@ -7,6 +7,6 @@ var confirmationSchema  = new Schema({
     code: String,
     wedding: Boolean,
     transportation: Boolean
-}, { collection: 'confirmation'});
+}, { collection: 'confirmations'});
 
 module.exports = mongoose.model('confirmation', confirmationSchema);
