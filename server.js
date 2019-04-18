@@ -84,15 +84,21 @@ router.route('/confirm/:object')
     .get(function(req) {
         let object = req.params.object;
         console.log(object);
-        Confirmation.where({_id: object.id}).update({wedding: object.wedding, transportation: object.transportation}, function(err, confirmation) {
-            if (err) {
-                res.send(err);
-                console.log("Error trying to update confirmation");
-            }
 
-            console.log(confirmation);
-            return true;
-        });
+        const res = await Person.replaceOne({ _id: object.id }, {wedding: object.wedding, transportation: object.transportation});
+        console.log(res.n);
+        console.log(res.nModified);
+        return res.nModified;
+
+        // Confirmation.where({_id: object.id}).update({wedding: object.wedding, transportation: object.transportation}, function(err, confirmation) {
+        //     if (err) {
+        //         res.send(err);
+        //         console.log("Error trying to update confirmation");
+        //     }
+
+        //     console.log(confirmation);
+        //     return true;
+        // });
     });
 
 
