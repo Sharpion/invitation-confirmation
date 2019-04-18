@@ -14,7 +14,8 @@
     "body-parser": "latest",
     "cors": "latest",
     "mongoose": "latest",
-    "nodemailer": "latest"
+    "nodemailer": "latest",
+    "dotenv": "latest"
   },
   "engines": {
     "node": "8.x"

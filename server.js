@@ -8,7 +8,10 @@ var express     = require('express');        // call express
 var app         = express();                 // define our app using express
 var bodyParser  = require('body-parser');
 var cors        = require('cors');
-var nodemailer = require("nodemailer");
+var nodemailer  = require("nodemailer");
+var dotenv      = require('dotenv');
+
+dotenv.config();
 
 let transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -99,7 +102,7 @@ router.route('/confirm/:object')
     // http://localhost:8080/api/confirm/{"id":"5cb7c782fb6fc041ab93314e","wedding":true,"transportation":false}
     .get(function(req, res) {
         let object = JSON.parse(req.params.object);
-            Confirmation.findByIdAndUpdate(object.id, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
+            Confirmation.findOneAndUpdate({_id: object.id}, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
 
             if (err) {
                 res.send(err);
@@ -117,9 +120,7 @@ router.route('/confirm/:object')
                     res.send(err);
                     console.log("Error trying to send e-mail");
                 }
-
             });
-            
             res.send(ret);
         });  
     });
