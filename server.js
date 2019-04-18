@@ -8,6 +8,17 @@ var express     = require('express');        // call express
 var app         = express();                 // define our app using express
 var bodyParser  = require('body-parser');
 var cors        = require('cors');
+var nodemailer = require("nodemailer");
+
+let transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 587,
+    secure: false, // true for 465, false for other ports
+    auth: {
+        user: process.env.EMAIL, // generated ethereal user
+        pass: process.env.E_PASS // generated ethereal password
+    }
+});
 
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -16,8 +27,7 @@ app.use(bodyParser.json());
 app.use(cors()); //Enable cross-origin requests
 
 var port = process.env.PORT || 8080;        // set our port
-// var dbURI = process.env.MONGODB_URI;
-var dbURI = "mongodb://heroku_5z04cx58:c3mutt575jqs7fu6oq0impevt4@ds143156.mlab.com:43156/heroku_5z04cx58";
+var dbURI = process.env.MONGODB_URI;
 
 var mongoose   = require('mongoose');
 mongoose.connect(dbURI, { useNewUrlParser: true }); // connect to the database
@@ -58,6 +68,8 @@ router.get('/', function(req, res) {
 // on routes that end in /confirmation
 // ----------------------------------------------------
 router.route('/confirmation')
+    // get all confirmations
+    // http://localhost:8080/api/confirmation/
     .get(function(req, res) {
         Confirmation.find(function(err, ret) {
             if (err) {
@@ -70,7 +82,8 @@ router.route('/confirmation')
     });
 
 router.route('/confirmation/:code')
-    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmation/:confirmation_id)
+    // get confirmations by code
+    // http://localhost:8080/api/confirmation/:confirmation_id
     .get(function(req, res) {
         let code = req.params.code;
         Confirmation.find({code: code}, function(err, ret) {
@@ -82,16 +95,27 @@ router.route('/confirmation/:code')
         });
     });
 router.route('/confirm/:object')
+    // update wedding and/or transportation confirmation
+    // http://localhost:8080/api/confirm/{"id":"5cb7c782fb6fc041ab93314e","wedding":true,"transportation":false}
     .get(function(req, res) {
         let object = JSON.parse(req.params.object);
-        Confirmation.updateOne({_id: object.id}, {wedding: object.wedding, transportation: object.transportation}, function (err, ret) {
-            
+            Confirmation.findByIdAndUpdate(object.id, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
+            console.log(ret);
+
             if (err) {
                 res.send(err);
                 console.log("Error trying to update " + object.id);
             }
-            console.log(ret.n);
-            console.log(ret.nModified);
+            
+            transporter.sendMail({
+                from: '"Noivo 👻" <sharpion.k@gmail.com>', // sender address
+                to: "sharpion.k@gmail.com", // list of receivers
+                subject: "Confirmação", // Subject line
+                text: "Olá, o convidado " +ret.name+ " acabou de fazer alterações nas suas confirmações! Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + " | Vai de van: " + (ret.transportation? 'SIM' : 'NÃO'), // plain text body
+                html: "Olá<br><br> O convidado <b>"+ret.name+"</b> acabou de fazer alterações nas suas confirmações!<br><br>Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + "<br>Vai de van: " + (ret.transportation? 'SIM' : 'NÃO') // html body
+            });
+            
+            res.send(ret);
         });  
     });
 

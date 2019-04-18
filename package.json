@@ -13,7 +13,8 @@
     "express": "^4.16.4",
     "body-parser": "latest",
     "cors": "latest",
-    "mongoose": "latest"
+    "mongoose": "latest",
+    "nodemailer": "latest"
   },
   "engines": {
     "node": "8.x"
