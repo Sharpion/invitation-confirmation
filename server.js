@@ -58,13 +58,13 @@ router.get('/', function(req, res) {
 // ----------------------------------------------------
 router.route('/confirmation')
     .get(function(req, res) {
-        Confirmation.find(function(err, confirmations) {
+        Confirmation.find(function(err, ret) {
             if (err) {
                 res.send(err);
                 console.log("Error trying to find");
             }
           
-            res.json(confirmations);
+            res.json(ret);
         }).sort({name: -1})
     });
 
@@ -72,12 +72,12 @@ router.route('/confirmation/:code')
     // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
     .get(function(req, res) {
         let code = req.params.code;
-        Confirmation.find({code: code}, function(err, confirmation) {
+        Confirmation.find({code: code}, function(err, ret) {
             if (err) {
                 res.send(err);
                 console.log("Error trying to find by code");
             }
-            res.json(confirmation);
+            res.json(ret);
         });
     });
 router.route('/confirm/:object')
@@ -85,20 +85,12 @@ router.route('/confirm/:object')
         let object = req.params.object;
         console.log(object);
 
-        const res = await Person.replaceOne({ _id: object.id }, {wedding: object.wedding, transportation: object.transportation});
-        console.log(res.n);
-        console.log(res.nModified);
-        return res.nModified;
-
-        // Confirmation.where({_id: object.id}).update({wedding: object.wedding, transportation: object.transportation}, function(err, confirmation) {
-        //     if (err) {
-        //         res.send(err);
-        //         console.log("Error trying to update confirmation");
-        //     }
-
-        //     console.log(confirmation);
-        //     return true;
-        // });
+        Confirmation.updateOne({ _id: object.id }, {wedding: object.wedding, transportation: object.transportation}, function (err, ret) {
+            console.log(ret);
+            console.log(ret.n);
+            console.log(ret.nModified);
+            return ret.nModified;
+        });        
     });
 
 
