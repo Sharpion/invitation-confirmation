@@ -57,7 +57,6 @@ router.get('/', function(req, res) {
 // on routes that end in /confirmation
 // ----------------------------------------------------
 router.route('/confirmation')
-
     .get(function(req, res) {
         Confirmation.find(function(err, confirmations) {
             if (err) {
@@ -67,11 +66,25 @@ router.route('/confirmation')
           
             res.json(confirmations);
         }).sort({name: -1})
-    })
+    });
+
+router.route('/confirmation/:code')
+    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
+    .get(function(req, res) {
+        let code = req.params.code;
+        Confirmation.find({code: code}, function(err, confirmation) {
+            if (err) {
+                res.send(err);
+                console.log("Error trying to find by code");
+            }
+            res.json(confirmation);
+        });
+    });
+router.route('/confirm/:object')
     .get(function(req) {
-        let wedding = req.params.wedding;
-        let transportation = req.params.transportation;
-        Confirmation.where({_id: id}).update({wedding: wedding, transportation: transportation}, function(err, confirmation) {
+        let object = req.params.object;
+        console.log(object);
+        Confirmation.where({_id: object.id}).update({wedding: object.wedding, transportation: object.transportation}, function(err, confirmation) {
             if (err) {
                 res.send(err);
                 console.log("Error trying to update confirmation");
@@ -81,21 +94,6 @@ router.route('/confirmation')
             return true;
         });
     });
-
-
-    router.route('/confirmation/:code')
-    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
-    .get(function(req, res) {
-			let code = req.params.code;
-			Confirmation.find({code: code}, function(err, confirmation) {
-            if (err) {
-                res.send(err);
-                console.log("Error trying to find by code");
-            }
-            res.json(confirmation);
-    });
-
-});
 
 
 
