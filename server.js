@@ -82,9 +82,9 @@ router.route('/confirmation/:code')
     });
 router.route('/confirm/:object')
     .get(function(req) {
+        var ObjectID = require('mongodb').ObjectID;
         let object = req.params.object;
-        console.log(object);
-
+        
         Confirmation.updateOne({ id: ObjectID(object.id)}, {$set: {wedding: object.wedding, transportation: object.transportation}}, function (err, ret) {
             console.log(ret.n);
             console.log(ret.nModified);
