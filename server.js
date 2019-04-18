@@ -56,6 +56,7 @@ router.route('/confirmation')
 
   .get(function(req, res) {
 			console.log('Returning all confirmations...');
+			console.log(res);
 			Confirmation.find(function(err, confirmations) {
           if (err)
               res.send(err);
