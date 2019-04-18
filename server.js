@@ -16,10 +16,11 @@ app.use(bodyParser.json());
 app.use(cors()); //Enable cross-origin requests
 
 var port = process.env.PORT || 8080;        // set our port
-var dbURI = process.env.MONGODB_URI;
+// var dbURI = process.env.MONGODB_URI;
+var dbURI = "mongodb://heroku_5z04cx58:c3mutt575jqs7fu6oq0impevt4@ds143156.mlab.com:43156/heroku_5z04cx58";
 
 var mongoose   = require('mongoose');
-mongoose.connect(dbURI); // connect to the database
+mongoose.connect(dbURI, { useNewUrlParser: true }); // connect to the database
 
 // CONNECTION EVENTS
 // When successfully connected
@@ -69,7 +70,7 @@ router.route('/confirmation')
     });
 
 router.route('/confirmation/:code')
-    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmations/:confirmation_id)
+    // get the confirmation with that id (accessed at GET http://localhost:8080/api/confirmation/:confirmation_id)
     .get(function(req, res) {
         let code = req.params.code;
         Confirmation.find({code: code}, function(err, ret) {
@@ -81,17 +82,18 @@ router.route('/confirmation/:code')
         });
     });
 router.route('/confirm/:object')
-    .get(function(req) {
-        var ObjectID = require('mongodb').ObjectID;
-        let object = req.params.object;
-        
-        Confirmation.updateOne({ id: ObjectID(object.id)}, {$set: {wedding: object.wedding, transportation: object.transportation}}, function (err, ret) {
+    .get(function(req, res) {
+        let object = JSON.parse(req.params.object);
+        Confirmation.updateOne({_id: object.id}, {wedding: object.wedding, transportation: object.transportation}, function (err, ret) {
+            
+            if (err) {
+                res.send(err);
+                console.log("Error trying to update " + object.id);
+            }
             console.log(ret.n);
             console.log(ret.nModified);
-            return ret.nModified;
-        });        
+        });  
     });
-
 
 
 // REGISTER OUR ROUTES -------------------------------
