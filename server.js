@@ -85,8 +85,7 @@ router.route('/confirm/:object')
         let object = req.params.object;
         console.log(object);
 
-        Confirmation.updateOne({ _id: object.id }, {wedding: object.wedding, transportation: object.transportation}, function (err, ret) {
-            console.log(ret);
+        Confirmation.updateOne({ id: ObjectID(object.id)}, {$set: {wedding: object.wedding, transportation: object.transportation}}, function (err, ret) {
             console.log(ret.n);
             console.log(ret.nModified);
             return ret.nModified;
