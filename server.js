@@ -92,11 +92,12 @@ router.route('/confirm/:object')
     // http://localhost:8080/api/confirm/{"id":"5cb7c782fb6fc041ab93314e","wedding":true,"transportation":false}
     .get(function(req, res) {
         const object = JSON.parse(req.params.object);
-            Confirmation.findOneAndUpdate({_id: object._id}, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
-
+        Confirmation.findOneAndUpdate({_id: object._id}, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
             if (err) {
                 res.send(err);
                 console.log("Error trying to update " + object._id);
+            } else {
+                res.json(ret);
             }
         });  
     });
