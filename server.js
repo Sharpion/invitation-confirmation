@@ -13,16 +13,6 @@ var dotenv      = require('dotenv');
 
 dotenv.config();
 
-let transporter = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true, // use SSL
-    auth: {
-        user: process.env.EMAIL,
-        pass: process.env.E_PASS
-    }
-});
-
 // configure app to use bodyParser()
 // this will let us get the data from a POST
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -102,29 +92,12 @@ router.route('/confirm/:object')
     // http://localhost:8080/api/confirm/{"id":"5cb7c782fb6fc041ab93314e","wedding":true,"transportation":false}
     .get(function(req, res) {
         const object = JSON.parse(req.params.object);
-            Confirmation.findOneAndUpdate({_id: object.id}, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
+            Confirmation.findOneAndUpdate({_id: object._id}, {wedding: object.wedding, transportation: object.transportation}, {new:true}, function (err, ret) {
 
             if (err) {
                 res.send(err);
-                console.log("Error trying to update " + object.id);
+                console.log("Error trying to update " + object._id);
             }
-
-            const mailOptions = {
-                from: '"Noivo 👻" <sharpion.k@gmail.com>', // sender address
-                to: "sharpion.k@gmail.com", // list of receivers
-                subject: "Confirmação", // Subject line
-                text: "Olá, o convidado " +ret.name+ " acabou de fazer alterações nas suas confirmações! Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + " | Vai de van: " + (ret.transportation? 'SIM' : 'NÃO'), // plain text body
-                html: "Olá<br><br> O convidado <b>"+ret.name+"</b> acabou de fazer alterações nas suas confirmações!<br><br>Vai ao casamento: " + (ret.wedding? 'SIM' : 'NÃO') + "<br>Vai de van: " + (ret.transportation? 'SIM' : 'NÃO') // html body
-            };
-              
-            transporter.sendMail(mailOptions, function (err, info) {
-                if (err) {
-                    console.log(err);
-                    console.log("Error trying to send e-mail");
-                    res.send(err);
-                }
-                res.json(info);
-            });
         });  
     });
 
