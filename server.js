@@ -105,6 +105,7 @@ router.route('/confirm/:object')
 router.route('/change')
     .get(function(req, res) {
         const object = JSON.parse(req.params.object);
+        console.log(object);
         Log.populate(object, function(err, ret) {
             if (err) {
                 res.send(err);
