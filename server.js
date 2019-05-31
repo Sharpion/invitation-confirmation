@@ -8,7 +8,6 @@ var express     = require('express');        // call express
 var app         = express();                 // define our app using express
 var bodyParser  = require('body-parser');
 var cors        = require('cors');
-var nodemailer  = require("nodemailer");
 var dotenv      = require('dotenv');
 
 dotenv.config();
@@ -87,6 +86,7 @@ router.route('/confirmation/:code')
             res.json(ret);
         });
     });
+
 router.route('/confirm/:object')
     // update wedding and/or transportation confirmation
     // http://localhost:8080/api/confirm/{"id":"5cb7c782fb6fc041ab93314e","wedding":true,"transportation":false}
@@ -102,11 +102,29 @@ router.route('/confirm/:object')
         });  
     });
 
+router.route('/change')
+    // get all confirmations
+    // http://localhost:8080/api/confirmation/
+    .get(function(req, res) {
+        const object = JSON.parse(req.params.object);
+        Log.populate(object, function(err, ret) {
+            if (err) {
+                res.send(err);
+                console.log("Error trying to populate");
+            } else {
+                res.json(ret);
+            }
+        });
+    });
+
+
 
 // REGISTER OUR ROUTES -------------------------------
 // all of our routes will be prefixed with /api
 app.use('/api', router);
 var Confirmation     = require('./schema/confirmation');
+var Log     = require('./schema/log');
+
 
 // START THE SERVER
 // =============================================================================
