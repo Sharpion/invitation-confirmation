@@ -103,8 +103,6 @@ router.route('/confirm/:object')
     });
 
 router.route('/change')
-    // get all confirmations
-    // http://localhost:8080/api/confirmation/
     .get(function(req, res) {
         const object = JSON.parse(req.params.object);
         Log.populate(object, function(err, ret) {
